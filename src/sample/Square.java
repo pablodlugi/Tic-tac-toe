@@ -13,12 +13,18 @@ public class Square extends StackPane{
     private boolean insideO = false;
     private boolean isInsideX = false;
     private boolean isFill = false;
-    private Canvas canvas = new Canvas(100, 100);
+    private Canvas canvas;
+    private double xCoord;
+    private double yCoord;
 
     public Square(int col, int row){
         this.col = col;
         this.row = row;
         Rectangle field = new Rectangle(100, 100);
+        field.setStyle("-fx-background-color: darkgray");
+        canvas= new Canvas(100, 100);
+        xCoord = canvas.getLayoutX();
+        yCoord = canvas.getLayoutY();
         field.setFill(null);
         field.setStroke(Color.BLACK);
         field.setStrokeWidth(5);
@@ -36,7 +42,7 @@ public class Square extends StackPane{
         return isFill;
     }
 
-    public void setFill(boolean fill) {
+    public void setIsFill(boolean fill) {
         isFill = fill;
     }
 
@@ -44,7 +50,7 @@ public class Square extends StackPane{
         return insideO;
     }
 
-    public void setInsideO(boolean insideO) {
+    public void setIsInsideO(boolean insideO) {
         this.insideO = insideO;
     }
 
@@ -52,7 +58,7 @@ public class Square extends StackPane{
         return isInsideX;
     }
 
-    public void setInsideX(boolean insideX) {
+    public void setIsInsideX(boolean insideX) {
         isInsideX = insideX;
     }
 
@@ -80,6 +86,8 @@ public class Square extends StackPane{
                 ", insideO=" + insideO +
                 ", isInsideX=" + isInsideX +
                 ", isFill=" + isFill +
+                ", xCoord=" + xCoord +
+                ", yCcoord=" + yCoord +
                 '}';
     }
 }
