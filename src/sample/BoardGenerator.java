@@ -4,7 +4,6 @@ import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -18,23 +17,32 @@ public class BoardGenerator {
     private boolean turnO = true;
     private List<WinSeries> seriesList = new ArrayList<>();
     private Square[][] fields = new Square[3][3];
-    private List<Square> listOfFilledSquares;
+    private List<Square> listOfFilledSquares = new ArrayList<>();
 
 
     public Parent drawBoard() {
-        AnchorPane anchorPane = new AnchorPane();
-        anchorPane.setPrefSize(600, 600);
 
-        Button refreshButton = new Button("Refresh");
-        refreshButton.setPrefSize(100, 20);
-        refreshButton.setStyle("-fx-background-color: gold");
-        refreshButton.setFont(new Font(20));
-        refreshButton.setLayoutX(150);
-        refreshButton.setLayoutY(20);
+        Button refreshButton = getRefreshButton();
 
+        Pane pane = getPane();
+
+        AnchorPane anchorPane = getAnchorPane(refreshButton, pane);
+
+        createSquares(refreshButton, pane);
+        generateSeriesList();
+        return anchorPane;
+    }
+
+    private Pane getPane() {
         Pane pane = new Pane();
         pane.setStyle("-fx-background-color: darkgray");
         pane.setPrefSize(300,300);
+        return pane;
+    }
+
+    private AnchorPane getAnchorPane(Button refreshButton, Pane pane) {
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.setPrefSize(600, 600);
 
         anchorPane.setStyle("-fx-background-color: fuchsia");
         anchorPane.getChildren().addAll(pane, refreshButton);
@@ -42,39 +50,53 @@ public class BoardGenerator {
         anchorPane.setLeftAnchor(pane, 140.0);
         anchorPane.setBottomAnchor(refreshButton, 50.0);
         anchorPane.setLeftAnchor(refreshButton, 140.0);
+        return anchorPane;
+    }
 
-        listOfFilledSquares = new ArrayList<>();
+    private Button getRefreshButton() {
+        Button refreshButton = new Button("Refresh");
+        refreshButton.setPrefSize(100, 20);
+        refreshButton.setStyle("-fx-background-color: gold");
+        refreshButton.setFont(new Font(20));
+        refreshButton.setLayoutX(150);
+        refreshButton.setLayoutY(20);
+        return refreshButton;
+    }
 
+    private void createSquares(Button refreshButton, Pane pane) {
         for(int i = 0; i < 3; i++) {
             for(int j = 0; j < 3; j++) {
-                Square square = new Square(j, i);
+                Square square = new Square();
                 square.setTranslateX(j*100);
                 square.setTranslateY(i*100);
-                square.setOnMouseClicked(event -> {
-                    if(playable == false) {
-                        return;
-                    }
-                    if (square.getIsFill() == false && turnO == true) {
-                        drawO(square);
-                        checkFields();
-                    }
-                    if (square.getIsFill() == false && turnO == false) {
-                        drawX(square);
-                        checkFields();
-                    }
-                });
-
-                refreshButton.setOnAction(event -> {
-                    for (Square square1 : listOfFilledSquares) {
-                        clearCanvas(square1);
-                    }
-                });
+                square.setOnMouseClicked(event -> squareQuickEventHandler(square));
+                refreshButton.setOnAction(event -> refreshHandler());
                 fields[j][i] = square;
                 pane.getChildren().add(square);
             }
         }
-        generateSeriesList();
-        return anchorPane;
+    }
+
+    private void refreshHandler() {
+        for (Square square1 : listOfFilledSquares) {
+            clearCanvas(square1);
+        }
+        listOfFilledSquares.clear();
+    }
+
+    private void squareQuickEventHandler(Square square) {
+        if(playable == false) {
+            return;
+        }
+        if (square.getIsFill() == false && turnO == true) {
+            drawO(square);
+            checkFields();
+        }
+        if (square.getIsFill() == false && turnO == false) {
+            drawX(square);
+            checkFields();
+            printList(listOfFilledSquares);
+        }
     }
 
 
@@ -90,7 +112,7 @@ public class BoardGenerator {
     private void drawO(Square square) {
         GraphicsContext graphicsContext = square.getCanvas().getGraphicsContext2D();
         graphicsContext.setLineWidth(10);
-        graphicsContext.setStroke(Color.WHITE);
+        graphicsContext.setStroke(Color.CORAL);
         graphicsContext.strokeOval(25, 25, 50 , 50);
         square.setIsFill(true);
         square.setIsInsideO(true);
@@ -120,6 +142,7 @@ public class BoardGenerator {
         turnO = true;
         playable = true;
     }
+
 
     private void generateSeriesList() {
         for (int col = 0; col < 3; col++) {
