@@ -15,7 +15,6 @@ public class Square extends StackPane{
 
     public Square(){
         Rectangle field = new Rectangle(100, 100);
-        field.setStyle("-fx-background-color: darkgray");
         canvas= new Canvas(100, 100);
         field.setFill(null);
         field.setStroke(Color.BLACK);

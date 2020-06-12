@@ -13,7 +13,10 @@ import java.util.List;
 
 public class BoardGenerator {
 
+    private ArtificialIntelligence artificialIntelligence = new ArtificialIntelligence();
+
     private boolean playable = true;
+
     private boolean turnO = true;
     private List<WinSeries> seriesList = new ArrayList<>();
     private Square[][] fields = new Square[3][3];
@@ -69,22 +72,22 @@ public class BoardGenerator {
                 Square square = new Square();
                 square.setTranslateX(j*100);
                 square.setTranslateY(i*100);
-                square.setOnMouseClicked(event -> squareQuickEventHandler(square));
-                refreshButton.setOnAction(event -> refreshHandler());
+                square.setOnMouseClicked(event -> squareClickEventHandler(square));
+                refreshButton.setOnAction(event -> refreshButtonHandler());
                 fields[j][i] = square;
                 pane.getChildren().add(square);
             }
         }
     }
 
-    private void refreshHandler() {
+    private void refreshButtonHandler() {
         for (Square square1 : listOfFilledSquares) {
             clearCanvas(square1);
         }
         listOfFilledSquares.clear();
     }
 
-    private void squareQuickEventHandler(Square square) {
+    private void squareClickEventHandler(Square square) {
         if(playable == false) {
             return;
         }
@@ -112,7 +115,7 @@ public class BoardGenerator {
     private void drawO(Square square) {
         GraphicsContext graphicsContext = square.getCanvas().getGraphicsContext2D();
         graphicsContext.setLineWidth(10);
-        graphicsContext.setStroke(Color.CORAL);
+        graphicsContext.setStroke(Color.WHITE);
         graphicsContext.strokeOval(25, 25, 50 , 50);
         square.setIsFill(true);
         square.setIsInsideO(true);
@@ -155,6 +158,10 @@ public class BoardGenerator {
 
         seriesList.add(new WinSeries(fields[0][0], fields[1][1], fields[2][2]));
         seriesList.add(new WinSeries(fields[0][2], fields[1][1], fields[2][0]));
+    }
+
+    public void setTurnO(boolean turnO) {
+        this.turnO = turnO;
     }
 
     public void printList(List<Square> list) {
