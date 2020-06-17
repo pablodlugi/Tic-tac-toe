@@ -3,29 +3,25 @@ package sample;
 
 import javafx.scene.Parent;
 import javafx.scene.canvas.GraphicsContext;
+
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-public class ChooseFigure {
-    private boolean figureX;
-    private boolean figureO;
+public class ChooseFigureScene {
 
     private Pane paneO;
     private Pane paneX;
     private Pane paneLabel;
     private AnchorPane anchorPane;
 
-    public ChooseFigure() {
+    public ChooseFigureScene() {
         this.paneO = getPaneO();
         this.paneX = getPaneX();
         this.paneLabel = getPaneLabel();
         this.anchorPane = getAnchorPane(this.paneO, this.paneX, this.paneLabel);
-        this.figureO = false;
-        this.figureX = false;
-
     }
 
     public Parent drawChooseFigureScene() {
@@ -64,13 +60,12 @@ public class ChooseFigure {
         for(int i = 0; i < 2; i++) {
             Square square = new Square();
             GraphicsContext graphicsContext = square.getCanvas().getGraphicsContext2D();
+            graphicsContext.setLineWidth(10);
             if (i==0) {
-                graphicsContext.setLineWidth(10);
                 graphicsContext.setStroke(Color.WHITE);
                 graphicsContext.strokeOval(25, 25, 50, 50);
                 paneO.getChildren().add(square);
             }else {
-                graphicsContext.setLineWidth(10);
                 graphicsContext.setStroke(Color.BLACK);
                 graphicsContext.strokeLine(25, 25, 75, 75);
                 graphicsContext.strokeLine(25, 75, 75, 25);
@@ -103,21 +98,5 @@ public class ChooseFigure {
 
     public Pane getPanelX() {
         return paneX;
-    }
-
-    public boolean getFigureX() {
-        return figureX;
-    }
-
-    public boolean getFigureO() {
-        return figureO;
-    }
-
-    public void setFigureX(boolean figureX) {
-        this.figureX = figureX;
-    }
-
-    public void setFigureO(boolean figureO) {
-        this.figureO = figureO;
     }
 }

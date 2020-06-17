@@ -15,7 +15,7 @@ public class Square extends StackPane{
 
     public Square(){
         Rectangle field = new Rectangle(100, 100);
-        canvas= new Canvas(100, 100);
+        canvas = new Canvas(100, 100);
         field.setFill(null);
         field.setStroke(Color.BLACK);
         field.setStrokeWidth(5);

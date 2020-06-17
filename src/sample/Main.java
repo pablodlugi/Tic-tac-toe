@@ -16,7 +16,7 @@ public class Main extends Application {
     }
 
     private void chooseScene(Stage primaryStage) {
-        ChooseFigure chooseFigure = new ChooseFigure();
+        ChooseFigureScene chooseFigure = new ChooseFigureScene();
         BoardGenerator boardGenerator = new BoardGenerator();
         primaryStage.setScene(new Scene(chooseFigure.drawChooseFigureScene()));
         panesEventHandlers(primaryStage, chooseFigure, boardGenerator);
@@ -30,11 +30,10 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    private void panesEventHandlers(Stage primaryStage, ChooseFigure chooseFigure, BoardGenerator boardGenerator) {
+    private void panesEventHandlers(Stage primaryStage, ChooseFigureScene chooseFigure, BoardGenerator boardGenerator) {
         EventHandler<MouseEvent> pane0clicked = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                chooseFigure.setFigureO(true);
                 primaryStage.setScene(new Scene(boardGenerator.drawBoard()));
                 event.consume();
             }
@@ -43,7 +42,7 @@ public class Main extends Application {
         EventHandler<MouseEvent> paneXclicked = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                chooseFigure.setFigureX(true);
+                FigureInformations.setFigureX(true);
                 primaryStage.setScene(new Scene(boardGenerator.drawBoard()));
                 event.consume();
             }
