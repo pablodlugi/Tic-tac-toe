@@ -1,18 +1,28 @@
 package sample;
 
-import java.util.List;
-import java.util.Random;
 
 public class ArtificialIntelligence {
 
-    public Square randomEmptySquare(List<Square> emptySquares) {
-        if (emptySquares.size() == 0) {
-            return null;
-        }else {
-            Random random = new Random();
-            int i = random.nextInt(emptySquares.size());
+    private static boolean isAIFigureX;
 
-            return emptySquares.get(i);
+    public Square possibleMove(Square[][] squares) {
+        Square square = new Square();
+        for(int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (!squares[i][j].getIsFill()) {
+                    square = squares[i][j];
+                    break;
+                }
+            }
         }
+        return square;
+    }
+
+    public boolean getIsAIFigureX() {
+        return isAIFigureX;
+    }
+
+    public void setAIFigureX(boolean AIFigureX) {
+        isAIFigureX = AIFigureX;
     }
 }

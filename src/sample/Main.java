@@ -1,25 +1,22 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
-        chooseScene(primaryStage);
-
+        sceneOfChoice(primaryStage);
     }
 
-    private void chooseScene(Stage primaryStage) {
+    private void sceneOfChoice(Stage primaryStage) {
         ChooseFigureScene chooseFigure = new ChooseFigureScene();
-        BoardGenerator boardGenerator = new BoardGenerator();
+        BoardLogic boardLogic = new BoardLogic();
         primaryStage.setScene(new Scene(chooseFigure.drawChooseFigureScene()));
-        panesEventHandlers(primaryStage, chooseFigure, boardGenerator);
+        chooseFigure.getterPane0().setOnMouseClicked(event -> paneOEventHandler(primaryStage, boardLogic));
+        chooseFigure.getterPaneX().setOnMouseClicked(event -> paneXEventHandler(primaryStage, boardLogic));
 
         primaryStage.setHeight(600);
         primaryStage.setWidth(600);
@@ -30,25 +27,16 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    private void panesEventHandlers(Stage primaryStage, ChooseFigureScene chooseFigure, BoardGenerator boardGenerator) {
-        EventHandler<MouseEvent> pane0clicked = new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                primaryStage.setScene(new Scene(boardGenerator.drawBoard()));
-                event.consume();
-            }
-        };
+    private void paneOEventHandler(Stage primaryStage, BoardLogic boardLogic) {
+        ArtificialIntelligence artificialIntelligence = new ArtificialIntelligence();
+        artificialIntelligence.setAIFigureX(true);
+        primaryStage.setScene(new Scene(boardLogic.drawBoard()));
+    }
 
-        EventHandler<MouseEvent> paneXclicked = new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                FigureInformations.setFigureX(true);
-                primaryStage.setScene(new Scene(boardGenerator.drawBoard()));
-                event.consume();
-            }
-        };
-        chooseFigure.getPanelX().addEventHandler(MouseEvent.MOUSE_CLICKED, paneXclicked);
-        chooseFigure.getPanel0().addEventHandler(MouseEvent.MOUSE_CLICKED, pane0clicked);
+    private void paneXEventHandler(Stage primaryStage, BoardLogic boardLogic) {
+        ArtificialIntelligence artificialIntelligence = new ArtificialIntelligence();
+        artificialIntelligence.setAIFigureX(false);
+        primaryStage.setScene(new Scene(boardLogic.drawBoard()));
     }
 
     public static void main(String[] args) {
