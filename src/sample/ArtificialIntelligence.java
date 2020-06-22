@@ -1,24 +1,32 @@
 package sample;
 
 
+import java.util.Random;
+
 public class ArtificialIntelligence {
 
     private static boolean isAIFigureX;
 
     public Square possibleMove(Square[][] squares) {
         Square square = new Square();
-        for(int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (!squares[i][j].getIsFill()) {
-                    square = squares[i][j];
-                    break;
-                }
+        Random random = new Random();
+
+        int numberOfFields = squares.length * squares[1].length;
+
+        for(int k = 0; k < numberOfFields; k++) {
+            int i = random.nextInt(squares.length);
+            int j = random.nextInt(squares[1].length);
+            if (!squares[i][j].isFill()) {
+                square = squares[i][j];
+                break;
+            } else {
+                continue;
             }
         }
         return square;
     }
 
-    public boolean getIsAIFigureX() {
+    public boolean IsAIFigureX() {
         return isAIFigureX;
     }
 

@@ -1,13 +1,14 @@
 package sample;
 
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,22 +16,21 @@ import java.util.List;
 public class BoardLogic {
 
     private boolean playable = true;
+    private int movesCounter = 0;
     private List<WinSeries> seriesList = new ArrayList<>();
     private Square[][] fields = new Square[3][3];
     private ArtificialIntelligence artificialIntelligence = new ArtificialIntelligence();
 
-    private Canvas canvas = new Canvas(50, 50);
-    private Text text = new Text();
+    private static int boardDim = 3;
 
-
+    private Label label = getLabel();
+    private Pane paneWin = getWinPane();
 
     public Parent drawBoard() {
 
         Button refreshButton = getRefreshButton();
-        Pane paneWin = getWinPane();
-        Pane paneText = getTextPane();
         Pane pane = getPane();
-        AnchorPane anchorPane = getAnchorPane(refreshButton, pane, paneWin, paneText);
+        AnchorPane anchorPane = getAnchorPane(refreshButton, label, pane, paneWin);
         createSquares(refreshButton, pane);
         generateSeriesList();
 
@@ -38,8 +38,8 @@ public class BoardLogic {
     }
 
     private void createSquares(Button refreshButton, Pane pane) {
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
+        for(int i = 0; i < boardDim; i++) {
+            for(int j = 0; j < boardDim; j++) {
                 Square square = new Square();
                 square.setTranslateX(j*100);
                 square.setTranslateY(i*100);
@@ -52,61 +52,86 @@ public class BoardLogic {
     }
 
     private void refreshButtonHandler() {
+        Node node = paneWin.getChildren().get(0);
+        if (node instanceof Square) {
+            Square square = (Square) node;
+            clearCanvas(square);
+        }
+
         for(int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 clearCanvas(fields[i][j]);
             }
         }
+        label.setText("");
+        movesCounter = 0;
     }
 
     private void squareClickEventHandler(Square square) {
         if (playable) {
-            if(artificialIntelligence.getIsAIFigureX() == true && square.getIsFill() == false) {
+            if(artificialIntelligence.IsAIFigureX() == true && square.isFill() == false) {
                 drawO(square);
                 drawX(artificialIntelligence.possibleMove(fields));
-            }else if(artificialIntelligence.getIsAIFigureX() == false && square.getIsFill() == false) {
+            }else if(artificialIntelligence.IsAIFigureX() == false && square.isFill() == false) {
                 drawX(square);
                 drawO(artificialIntelligence.possibleMove(fields));
             }
-            checkFields();
         }else {
             return;
         }
     }
 
 
-    private void checkFields() {
+    private void checkFields(Square square) {
+        movesCounter++;
+        Node node = paneWin.getChildren().get(0);
         for (WinSeries winSeries : seriesList) {
-            if(winSeries.isDone() == true) {
-                GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
-                canvasO(graphicsContext);
+            if(winSeries.isDone() == true && square.isInsideO() == true) {
+                if(node instanceof Square) {
+                    GraphicsContext graphicsContext = ((Square) node).getCanvas().getGraphicsContext2D();
+                    canvasO(graphicsContext);
+                    label.setText("Wins!");
+                    playable = false;
+                    break;
+                }
+            }else if(winSeries.isDone() == true && square.isInsideX() == true) {
+                if (node instanceof Square) {
+                    GraphicsContext graphicsContext = ((Square) node).getCanvas().getGraphicsContext2D();
+                    canvasX(graphicsContext);
+                    label.setText("Wins!");
+                    playable = false;
+                    break;
+                }
+            }else if(winSeries.isDone() == false && movesCounter == 9) {
+                label.setText("Draw!");
                 playable = false;
-                break;
             }
         }
     }
 
     private void drawO(Square square) {
-        GraphicsContext graphicsContext = square.getCanvas().getGraphicsContext2D();
-        canvasO(graphicsContext);
-        square.setIsFill(true);
-        square.setIsInsideO(true);
+        if(playable) {
+            GraphicsContext graphicsContext = square.getCanvas().getGraphicsContext2D();
+            canvasO(graphicsContext);
+            square.setFill(true, "O");
+            checkFields(square);
+        }
     }
 
     private void drawX(Square square) {
-        GraphicsContext graphicsContext = square.getCanvas().getGraphicsContext2D();
-        canvasX(graphicsContext);
-        square.setIsFill(true);
-        square.setIsInsideX(true);
+        if(playable) {
+            GraphicsContext graphicsContext = square.getCanvas().getGraphicsContext2D();
+            canvasX(graphicsContext);
+            square.setFill(true, "X");
+            checkFields(square);
+        }
     }
 
     private void clearCanvas(Square square) {
         Canvas canvas = square.getCanvas();
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
         graphicsContext.clearRect(0, 0, 100, 100);
-        square.setIsFill(false);
-        square.setIsInsideO(false);
-        square.setIsInsideX(false);
+        square.setFill(false, null);
         playable = true;
     }
 
@@ -138,19 +163,18 @@ public class BoardLogic {
 
     private Pane getWinPane() {
         Pane pane = new Pane();
-        pane.setPrefSize(50,50);
-        pane.getChildren().add(canvas);
-        pane.setStyle("-fx-background-color: blue");
+        Square square = new Square();
+        pane.setPrefSize(100,100);
+        pane.setStyle("-fx-background-color: blueviolet");
+        pane.getChildren().add(square);
+        pane.getChildren().set(0, square);
         return pane;
     }
 
-    private Pane getTextPane() {
-        Pane pane = new Pane();
-        pane.setPrefSize(100,75);
-        pane.setStyle("-fx-background-color: chartreuse");
-        text.setFont(Font.font("Arial Black", 25));
-        pane.getChildren().add(text);
-        return pane;
+    private Label getLabel() {
+        Label label = new Label();
+        label.setFont(new Font("Arial BLack",30));
+        return label;
     }
 
     private Pane getPane() {
@@ -160,20 +184,20 @@ public class BoardLogic {
         return pane;
     }
 
-    private AnchorPane getAnchorPane(Button refreshButton, Pane... panes) {
+    private AnchorPane getAnchorPane(Button refreshButton, Label label, Pane... panes) {
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setPrefSize(600, 600);
 
-        anchorPane.setStyle("-fx-background-color: fuchsia");
-        anchorPane.getChildren().addAll(panes[0], panes[1], panes[2], refreshButton);
+        anchorPane.setStyle("-fx-background-color: royalblue");
+        anchorPane.getChildren().addAll(panes[0], panes[1], refreshButton, label);
         anchorPane.setTopAnchor(panes[0], 100.0);
         anchorPane.setLeftAnchor(panes[0], 140.0);
         anchorPane.setBottomAnchor(refreshButton, 50.0);
         anchorPane.setLeftAnchor(refreshButton, 140.0);
-        anchorPane.setBottomAnchor(panes[1], 50.0);
+        anchorPane.setBottomAnchor(panes[1], 25.0);
         anchorPane.setLeftAnchor(panes[1], 300.0);
-        anchorPane.setBottomAnchor(panes[2], 50.0);
-        anchorPane.setLeftAnchor(panes[2], 380.0);
+        anchorPane.setBottomAnchor(label, 50.0);
+        anchorPane.setLeftAnchor(label, 450.0);
 
         return anchorPane;
     }
@@ -187,9 +211,4 @@ public class BoardLogic {
         refreshButton.setLayoutY(20);
         return refreshButton;
     }
-
-    public void printList(List<Square> list) {
-        System.out.println(list.size());
-    }
-
 }

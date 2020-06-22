@@ -8,9 +8,9 @@ import javafx.scene.shape.Rectangle;
 
 public class Square extends StackPane{
 
-    private boolean insideO = false;
-    private boolean isInsideX = false;
-    private boolean isFill = false;
+    private boolean insideO;
+    private boolean insideX;
+    private boolean isFill;
     private Canvas canvas;
 
     public Square(){
@@ -29,36 +29,40 @@ public class Square extends StackPane{
         return canvas;
     }
 
-    public boolean getIsFill() {
+    public boolean isFill() {
         return isFill;
     }
 
-    public void setIsFill(boolean fill) {
-        isFill = fill;
+    public void setFill(boolean fill, String filledFigure) {
+        if(fill) {
+            this.isFill = true;
+            if (filledFigure.equals("X")) {
+                this.insideX = true;
+                this.insideO = false;
+            }else if (filledFigure.equals("O")) {
+                this.insideX = false;
+                this.insideO = true;
+            }
+        }else {
+            this.isFill = false;
+            this.insideX = false;
+            this.insideO = false;
+        }
     }
 
-    public boolean getIsInsideO() {
+    public boolean isInsideO() {
         return insideO;
     }
 
-    public void setIsInsideO(boolean insideO) {
-        this.insideO = insideO;
+    public boolean isInsideX() {
+        return insideX;
     }
-
-    public boolean getIsInsideX() {
-        return isInsideX;
-    }
-
-    public void setIsInsideX(boolean insideX) {
-        isInsideX = insideX;
-    }
-
 
     @Override
     public String toString() {
         return "Square{" +
-                ", insideO=" + insideO +
-                ", isInsideX=" + isInsideX +
+                " insideO=" + insideO +
+                ", isInsideX=" + insideX +
                 ", isFill=" + isFill +
                 '}';
     }

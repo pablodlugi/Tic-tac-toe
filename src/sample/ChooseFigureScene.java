@@ -2,7 +2,6 @@ package sample;
 
 
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.layout.AnchorPane;
@@ -18,6 +17,8 @@ public class ChooseFigureScene {
     private Pane paneLabel;
     private AnchorPane anchorPane;
 
+    private static int numberOfFiguresToChoose = 2;
+
     public ChooseFigureScene() {
         this.paneO = getPaneO();
         this.paneX = getPaneX();
@@ -31,7 +32,7 @@ public class ChooseFigureScene {
     }
 
     private void createFieldsToChoose(Pane paneO, Pane paneX) {
-        for(int i = 0; i < 2; i++) {
+        for(int i = 0; i < numberOfFiguresToChoose; i++) {
             Square square = new Square();
             GraphicsContext graphicsContext = square.getCanvas().getGraphicsContext2D();
             graphicsContext.setLineWidth(10);
@@ -50,7 +51,7 @@ public class ChooseFigureScene {
 
     private AnchorPane getAnchorPane(Pane... panes) {
         AnchorPane anchorPane = new AnchorPane();
-        anchorPane.setStyle("-fx-background-color: fuchsia");
+        anchorPane.setStyle("-fx-background-color: royalblue");
         anchorPane.setTopAnchor(panes[0], 200.0);
         anchorPane.setLeftAnchor(panes[0], 195.0);
         anchorPane.setTopAnchor(panes[1], 200.0);
@@ -66,7 +67,7 @@ public class ChooseFigureScene {
         Text text = new Text();
         text.setText("Choose your figure");
         text.setFont(Font.font("Arial Black", 25));
-        pane.setStyle("-fx-background-color: fuchsia");
+        pane.setStyle("-fx-background-color: royalblue");
         pane.setPrefSize(250, 75);
         pane.getChildren().add(text);
 
