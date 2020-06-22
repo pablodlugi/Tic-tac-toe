@@ -1,5 +1,8 @@
 package sample;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
@@ -7,8 +10,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +31,7 @@ public class BoardLogic {
 
     private Label label = getLabel();
     private Pane paneWin = getWinPane();
+    private Line line = new Line();
 
     public Parent drawBoard() {
 
@@ -65,6 +72,7 @@ public class BoardLogic {
         }
         label.setText("");
         movesCounter = 0;
+        line.setStroke(Color.DARKGREY);
     }
 
     private void squareClickEventHandler(Square square) {
@@ -92,6 +100,7 @@ public class BoardLogic {
                     canvasO(graphicsContext);
                     label.setText("Wins!");
                     playable = false;
+                    winningAnimation(winSeries);
                     break;
                 }
             }else if(winSeries.isDone() == true && square.isInsideX() == true) {
@@ -100,6 +109,7 @@ public class BoardLogic {
                     canvasX(graphicsContext);
                     label.setText("Wins!");
                     playable = false;
+                    winningAnimation(winSeries);
                     break;
                 }
             }else if(winSeries.isDone() == false && movesCounter == 9) {
@@ -107,6 +117,22 @@ public class BoardLogic {
                 playable = false;
             }
         }
+    }
+
+    private void winningAnimation(WinSeries winSeries) {
+        Square[] squares = winSeries.getSquares();
+        line.setStrokeWidth(10);
+        line.setStroke(Color.CRIMSON);
+        line.setStartX(squares[0].getTranslateX()+53);
+        line.setStartY(squares[0].getTranslateY()+53);
+        line.setEndX(squares[0].getTranslateX()+53);
+        line.setEndY(squares[0].getTranslateY()+53);
+
+        Timeline timeline = new Timeline();
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.5),
+                new KeyValue(line.endXProperty(), squares[2].getTranslateX()+53),
+                new KeyValue(line.endYProperty(), squares[2].getTranslateY()+53)));
+        timeline.play();
     }
 
     private void drawO(Square square) {
@@ -148,6 +174,7 @@ public class BoardLogic {
         graphicsContext.strokeLine(25, 75, 75, 25);
     }
 
+
     private void generateSeriesList() {
         for (int col = 0; col < 3; col++) {
             seriesList.add(new WinSeries(fields[0][col], fields[1][col], fields[2][col]));
@@ -181,6 +208,7 @@ public class BoardLogic {
         Pane pane = new Pane();
         pane.setStyle("-fx-background-color: darkgray");
         pane.setPrefSize(300,300);
+        pane.getChildren().add(line);
         return pane;
     }
 
